@@ -27,27 +27,27 @@ public class AsyncHttp implements HttpClient {
 
   @Override
   public CompletableFuture<HttpResponse> execute(HttpRequest request) {
-    return async.executeRequest(convertRequest(request))
+    return async.executeRequest(toAsyncRequest(request))
         .toCompletableFuture()
-        .thenApply(this::convertResponse);
+        .thenApply(this::toHollerResponse);
   }
 
-  private Request convertRequest(HttpRequest request) {
+  private Request toAsyncRequest(HttpRequest request) {
     return new RequestBuilder()
         .setBody(request.getBodyBytes())
         .setMethod(request.getMethod())
-        .setQueryParams(convertQueryParams(request.getQueryParams()))
+        .setQueryParams(toAsyncQueryParams(request.getQueryParams()))
         .setUrl(request.getUrl())
-        .setHeaders(convertHeaders(request))
+        .setHeaders(toAsyncHeaders(request))
         .build();
   }
 
-  private Map<String, List<String>> convertQueryParams(List<QueryParam> hollerParams) {
+  private Map<String, List<String>> toAsyncQueryParams(List<QueryParam> hollerParams) {
     return hollerParams.stream()
         .collect(Collectors.toMap(QueryParam::getKey, QueryParam::getValues));
   }
 
-  private HttpHeaders convertHeaders(HttpRequest request) {
+  private HttpHeaders toAsyncHeaders(HttpRequest request) {
     HttpHeaders httpHeaders = new DefaultHttpHeaders();
     for (Header header : request.getHeaders()) {
       httpHeaders.add(header.getKey(), header.getValue());
@@ -57,17 +57,17 @@ public class AsyncHttp implements HttpClient {
     return httpHeaders;
   }
 
-  private List<Header> convertHeaders(HttpHeaders asyncHeaders) {
+  private List<Header> toHollerHeaders(HttpHeaders asyncHeaders) {
     return asyncHeaders.entries().stream()
         .map((e) -> Header.builder().setKey(e.getKey()).addValue(e.getValue()).build())
         .collect(Collectors.toList());
   }
 
-  private HttpResponse convertResponse(Response asyncResponse) {
+  private HttpResponse toHollerResponse(Response asyncResponse) {
     return HttpResponse.builder()
         .setBodyAsInputStream(asyncResponse.getResponseBodyAsStream())
         .setStatusCode(asyncResponse.getStatusCode())
-        .setHeaders(convertHeaders(asyncResponse.getHeaders()))
+        .setHeaders(toHollerHeaders(asyncResponse.getHeaders()))
         .build();
   }
 }
