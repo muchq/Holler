@@ -63,11 +63,5 @@
       <version>1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>com.muchq</groupId>
-      <artifactId>Logging</artifactId>
-      <version>1.0-SNAPSHOT</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 </project>

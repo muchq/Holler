@@ -5,6 +5,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import com.muchq.holler.exceptions.InvalidHeadersException;
+import com.muchq.holler.util.RequestUtils;
 import com.muchq.immutables.MoonStyle;
 import com.muchq.json.JsonUtils;
 import org.immutables.value.Value.Immutable;
@@ -16,7 +17,6 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
 
-import static com.muchq.holler.core.HeaderIF.CONTENT_TYPE;
 
 @Immutable
 @MoonStyle
@@ -28,7 +28,7 @@ public interface HttpResponseIF {
   @Lazy
   default Optional<String> getContentType() {
     for (Header header : getHeaders()) {
-      if (header.getKey().equals(CONTENT_TYPE)) {
+      if (header.getKey().equals(RequestUtils.CONTENT_TYPE)) {
         if (header.getValue().size() != 1) {
           throw new InvalidHeadersException();
         }
